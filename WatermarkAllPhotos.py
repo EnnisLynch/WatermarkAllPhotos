@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[5]:
-
-
 from PIL import Image, ImageDraw, ImageFont
 import os;
 import glob;
@@ -48,16 +42,3 @@ for file in glob.glob("*.jpg"):
     size = 1024,1024
     image.thumbnail(size)
     image.save(OUTPUT_PATH + "\\" + file + ".thumb.jpg", quality=100, subsampling=0);
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
