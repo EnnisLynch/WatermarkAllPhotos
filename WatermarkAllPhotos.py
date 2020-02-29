@@ -1,11 +1,10 @@
 from PIL import Image, ImageDraw, ImageFont
 import os;
 import glob;
-import sys;
+import tkinter;
 from tkinter import filedialog;
+import piexif;
 
-#fix ask directory bug for windows by changing threading model
-sys.coinit_flags = 2  # COINIT_APARTMENTTHREADED
 
 OUTPUT_PATH = "watermark";
 
@@ -26,7 +25,7 @@ def writeOnImage(text, image):
 
 root = tkinter.Tk();
 folder_selected = filedialog.askdirectory();
-print (folder_selected);
+
 os.chdir(folder_selected);
 root.destroy();
 
@@ -35,10 +34,17 @@ if(not os.path.isdir(OUTPUT_PATH)):
 
 
 for file in glob.glob("*.jpg"):
-    print(file);
     image = Image.open(file);
+    
+    exif_dict = piexif.load(image.info['exif'])
+    
+    exif_dict["0th"][piexif.ImageIFD.Copyright] = "Joseph Wilson {http://wilsonadventurephotography.com}";
+    
+    
+    exif_bytes = piexif.dump(exif_dict)
+    
     writeOnImage("@jojo", image);
-    image.save(OUTPUT_PATH + "\\" + file, quality=100, subsampling=0);
+    image.save(OUTPUT_PATH + "\\" + file, quality=100, subsampling=0, exif=exif_bytes);
     size = 1024,1024
     image.thumbnail(size)
-    image.save(OUTPUT_PATH + "\\" + file + ".thumb.jpg", quality=100, subsampling=0);
+    image.save(OUTPUT_PATH + "\\" + file + ".thumb.jpg", quality=100, subsampling=0, exif=exif_bytes);
